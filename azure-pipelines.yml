@@ -6,14 +6,38 @@
 trigger:
 - main
 
-pool:
-  vmImage: ubuntu-latest
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'webinar-acr-connection'
+  imageRepository: 'webinar-web-app'
+  containerRegistry: 'webinaracr.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  tag: '$(Build.BuildId)'
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+#Stages
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+          latest
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/webinar-web-app'
+        ArtifactName: 'webinar-artifact'
+        publishLocation: 'Container'
