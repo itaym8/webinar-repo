@@ -1,0 +1,16 @@
+{
+ "name": "node-app",
+ "description": "Welcome To The Webinar ! :-)",
+ "version": "0.0.1",
+ "private": true,
+ "dependencies": {
+  "express": "latest"
+ },
+ "devDependencies": {
+  "mocha": "latest",
+  "supertest": "latest"
+ },
+ "scripts": {
+   "test": "mocha"
+ }
+}
