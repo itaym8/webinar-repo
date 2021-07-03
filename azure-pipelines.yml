@@ -21,6 +21,7 @@ stages:
 - stage: My_Environment
   displayName: Print Params, Test, Build and Push Stage
   jobs:
+  # Print all the parameters
   - job: Print_Parameters
     displayName: Print Parameters
     pool:
@@ -37,6 +38,7 @@ stages:
           echo 'Dockerfile Path: ' $(dockerfilePath)
           echo 'Build ID: ' $(tag)
           echo 'VM Image Name: ' $(vmImageName)
+  # Run npm install and npm test
   - job: Application_Tests
     displayName: Npm Install and Npm Test
     pool:
@@ -50,3 +52,24 @@ stages:
       inputs:
         command: 'custom'
         customCommand: 'run test'
+  # Build an image from Dockerfile and push it to the Azure Container Registry, publish the Artifact for Release Pipeline
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push the image to the Azure Container Registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+          latest
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/webinar-web-app'
+        ArtifactName: 'webinar-artifact'
+        publishLocation: 'Container'
