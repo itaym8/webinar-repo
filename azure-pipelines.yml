@@ -41,6 +41,7 @@ stages:
   # Run npm install and npm test
   - job: Application_Tests
     displayName: Npm Install and Npm Test
+    dependsOn: Print_Parameters
     pool:
       vmImage: $(vmImageName)
     steps:
@@ -55,6 +56,7 @@ stages:
   # Build an image from Dockerfile and push it to the Azure Container Registry, publish the Artifact for Release Pipeline
   - job: Build
     displayName: Build
+    dependsOn: Application_Tests
     pool:
       vmImage: $(vmImageName)
     steps:
