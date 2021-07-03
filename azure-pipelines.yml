@@ -30,10 +30,15 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          echo $(tag)
-          echo 'Hello'
+          echo 'Print All Parameters:'
+          echo 'Service Connection: ' $(dockerRegistryServiceConnection)
+          echo '`Image Repository: ' $(imageRepository)
+          echo 'Azure container Registry: ' $(containerRegistry)
+          echo 'Dockerfile Path: ' $(dockerfilePath)
+          echo 'Build ID: ' $(tag)
+          echo 'VM Image Name: ' $(vmImageName)
   - job: Application_Tests
-    displayName: Test
+    displayName: Npm Install and Npm Test
     pool:
       vmImage: $(vmImageName)
     steps:
