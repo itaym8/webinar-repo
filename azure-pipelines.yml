@@ -21,7 +21,7 @@ stages:
 - stage: My_Environment
   displayName: Print Params, Test, Build and Push Stage
   jobs:
-  - job: Print Parameters
+  - job: Print_Parameters
     displayName: Print Parameters
     pool:
       vmImage: $(vmImageName)
@@ -32,7 +32,7 @@ stages:
         script: |
           echo $(tag)
           echo 'Hello'
-  - job: Application Tests
+  - job: Application_Tests
     displayName: Test
     pool:
       vmImage: $(vmImageName)
