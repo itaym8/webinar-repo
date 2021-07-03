@@ -18,7 +18,7 @@ variables:
 
 #Stages
 stages:
-- stage: My Environment
+- stage: My_Environment
   displayName: Print Params, Test, Build and Push Stage
   jobs:
   - job: Print Parameters
