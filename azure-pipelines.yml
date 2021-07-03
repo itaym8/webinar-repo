@@ -18,26 +18,30 @@ variables:
 
 #Stages
 stages:
-- stage: Build
-  displayName: Build and push stage
+- stage: My Environment
+  displayName: Print Params, Test, Build and Push Stage
   jobs:
-  - job: Build
-    displayName: Build
+  - job: Print Parameters
+    displayName: Print Parameters
     pool:
       vmImage: $(vmImageName)
     steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
+    - task: Bash@3
       inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
-          latest
-    - task: PublishBuildArtifacts@1
+        targetType: 'inline'
+        script: |
+          echo $(tag)
+          echo 'Hello'
+  - job: Application Tests
+    displayName: Test
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Npm@1
       inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)/webinar-web-app'
-        ArtifactName: 'webinar-artifact'
-        publishLocation: 'Container'
+        command: 'install'
+        workingDir: '$(Build.SourcesDirectory)'
+    - task: Npm@1
+      inputs:
+        command: 'custom'
+        customCommand: 'run test'
