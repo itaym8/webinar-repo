@@ -1,0 +1,77 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'webinar-acr-connection'
+  imageRepository: 'webinar-web-app'
+  containerRegistry: 'webinaracr.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  tag: '$(Build.BuildId)'
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+#Stages
+stages:
+- stage: My_Environment
+  displayName: Print Params, Test, Build and Push Stage
+  jobs:
+  # Print all the parameters
+  - job: Print_Parameters
+    displayName: Print Parameters
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo 'Print All Parameters:'
+          echo 'Service Connection: ' $(dockerRegistryServiceConnection)
+          echo '`Image Repository: ' $(imageRepository)
+          echo 'Azure container Registry: ' $(containerRegistry)
+          echo 'Dockerfile Path: ' $(dockerfilePath)
+          echo 'Build ID: ' $(tag)
+          echo 'VM Image Name: ' $(vmImageName)
+  # Run npm install and npm test
+  - job: Application_Tests
+    displayName: Npm Install and Npm Test
+    dependsOn: Print_Parameters
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Npm@1
+      inputs:
+        command: 'install'
+        workingDir: '$(Build.SourcesDirectory)'
+    - task: Npm@1
+      inputs:
+        command: 'custom'
+        customCommand: 'run test'
+  # Build an image from Dockerfile and push it to the Azure Container Registry, publish the Artifact for Release Pipeline
+  - job: Build
+    displayName: Build
+    dependsOn: Application_Tests
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push the image to the Azure Container Registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+          latest
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/webinar-app.yaml'
+        ArtifactName: 'webinar-artifact'
+        publishLocation: 'Container'
