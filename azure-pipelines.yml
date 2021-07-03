@@ -70,6 +70,6 @@ stages:
           latest
     - task: PublishBuildArtifacts@1
       inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)/webinar-web-app'
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/webinar-app.yaml'
         ArtifactName: 'webinar-artifact'
         publishLocation: 'Container'
