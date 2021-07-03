@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
     - name: webinar-web-app
-      image: webinaracr.azurecr.io/webinar-web-app/1.0.0:latest
+      image: webinaracr.azurecr.io/webinar-web-app:latest
       ports:
         - containerPort: 80
 ---
