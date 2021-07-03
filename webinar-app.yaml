@@ -8,6 +8,7 @@ spec:
   containers:
     - name: webinar-web-app
       image: webinaracr.azurecr.io/webinar-web-app:latest
+      imagePullPolicy: Always
       ports:
         - containerPort: 80
 ---
