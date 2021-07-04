@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webinar-web-app-deployment
+  labels:
+    app: webinar-web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webinar-web-app
+  template:
+    metadata:
+      name: webinar-web-app
+      labels:
+        app: webinar-web-app
+    spec:
+      containers:
+        - name: webinar-web-app
+          image: webinaracr.azurecr.io/webinar-web-app:latest
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webinar-web-app-svc
+spec:
+  selector:
+    app: webinar-web-app
+  ports:
+    - port: 80
+      targetPort: 3000
+  type: LoadBalancer
