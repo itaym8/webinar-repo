@@ -75,7 +75,3 @@ stages:
         PathtoPublish: '$(System.DefaultWorkingDirectory)/deployment/'
         ArtifactName: 'webinar-artifact'
         publishLocation: 'Container'
-    - task: Bash@3
-      inputs:
-        targetType: 'inline'
-        script: 'echo $(tag) >> $(Build.Repository.LocalPath)/deployment/imageTag.txt'
